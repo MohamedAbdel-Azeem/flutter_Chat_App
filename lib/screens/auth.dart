@@ -72,12 +72,10 @@ class _AuthScreenState extends State<AuthScreen> {
         final imageUrl = await storageRef.getDownloadURL();
         await FirebaseFirestore.instance
             .collection('users')
-            .doc(userCredentials.user!.uid)
-            .set({
+            .doc(userCredentials.user!.uid).set({
           'username': _enteredUsermame,
           'email': _enteredEmail,
-          'image_url': imageUrl,
-          'chatRooms': []
+          'image_url': imageUrl
         });
       }
     } on FirebaseAuthException catch (error) {
@@ -92,7 +90,6 @@ class _AuthScreenState extends State<AuthScreen> {
       setState(() {
         _isAuthenticating = false;
       });
-      _formKey.currentState!.reset();
     }
   }
 
@@ -109,8 +106,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 margin: const EdgeInsets.only(
                     top: 30, bottom: 20, left: 20, right: 20),
                 width: 200,
-                child: Image.asset(
-                  'assets/images/chat.png'),
+                child: Image.asset('assets/images/chat.png'),
               ),
               Card(
                 margin: const EdgeInsets.all(20),
@@ -147,25 +143,24 @@ class _AuthScreenState extends State<AuthScreen> {
                               _enteredEmail = value!;
                             },
                           ),
-                          if (!_isLogin)
-                            TextFormField(
-                              decoration: const InputDecoration(
-                                labelText: 'Username',
-                              ),
-                              autocorrect: false,
-                              enableSuggestions: false,
-                              validator: (value) {
-                                if (value == null ||
-                                    value.trim().isEmpty ||
-                                    value.trim().length < 4) {
-                                  return 'please enter a valid username at least 4 characters.';
-                                }
-                                return null;
-                              },
-                              onSaved: (value) {
-                                _enteredUsermame = value!;
-                              },
+                        if (!_isLogin)
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              labelText: 'Username',
                             ),
+                            autocorrect: false,
+                            enableSuggestions: false,
+                            validator: (value) {
+                              if (value == null ||
+                                  value.trim().isEmpty || value.trim().length < 4) {
+                                return 'please enter a valid username at least 4 characters.';
+                              }
+                              return null;
+                            },
+                            onSaved: (value) {
+                              _enteredUsermame = value!;
+                            },
+                          ),
                           TextFormField(
                             decoration: const InputDecoration(
                               labelText: 'Password',

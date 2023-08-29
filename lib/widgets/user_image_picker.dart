@@ -19,22 +19,9 @@ class _UserImagePickerState extends State<UserImagePicker> {
 
   File? _pickedImageFile;
 
-  void _takeImage() async{
+  void _pickImage() async{
     final pickedImage = await ImagePicker().pickImage(
       source: ImageSource.camera, imageQuality: 50, maxWidth: 150,
-    );
-    if (pickedImage == null){
-      return;
-    }
-    setState(() {
-      _pickedImageFile = File(pickedImage.path);
-    });
-    widget.onPickImage(_pickedImageFile!);
-  }
-
-  void _selectImage() async{
-    final pickedImage = await ImagePicker().pickImage(
-      source: ImageSource.gallery, imageQuality: 50, maxWidth: 150,
     );
     if (pickedImage == null){
       return;
@@ -55,16 +42,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
           foregroundImage: _pickedImageFile != null ? FileImage(_pickedImageFile!) : null,
         ),
         TextButton.icon(
-          onPressed: _takeImage,
-          icon: const Icon(Icons.camera),
-          label: Text('Take image', style: TextStyle(
-              color: Theme
-                  .of(context)
-                  .colorScheme.primary
-          ),),
-        ),
-        TextButton.icon(
-          onPressed: _selectImage,
+          onPressed: _pickImage,
           icon: const Icon(Icons.image),
           label: Text('Add image', style: TextStyle(
               color: Theme

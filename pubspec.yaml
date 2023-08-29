@@ -41,9 +41,6 @@ dependencies:
   image_picker: ^1.0.2
   cloud_firestore: ^4.9.0
   firebase_messaging: ^14.6.7
-  uuid: ^3.0.7
-  intl: ^0.18.1
-  flutter_native_splash: ^2.3.2
 
 dev_dependencies:
   flutter_test:
