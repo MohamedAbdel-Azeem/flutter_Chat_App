@@ -5,9 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/widgets/message_bubble.dart';
 
 class ChatMessages extends StatelessWidget {
-  const ChatMessages({super.key, required this.chatRoomId});
-
-  final String chatRoomId;
+  const ChatMessages({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,11 +13,11 @@ class ChatMessages extends StatelessWidget {
 
     return StreamBuilder(
       stream: FirebaseFirestore.instance
-          .collection('chat+$chatRoomId')
+          .collection('chat')
           .orderBy(
-        'createdAt',
-        descending: true,
-      )
+            'createdAt',
+            descending: true,
+          )
           .snapshots(),
       builder: (ctx, chatSnapshot) {
         if (chatSnapshot.connectionState == ConnectionState.waiting) {
@@ -52,7 +50,7 @@ class ChatMessages extends StatelessWidget {
 
             final currentMessageUserId = chatMessage['userId'];
             final nextMessageUserId =
-            nextChatMessage != null ? nextChatMessage['userId'] : null;
+                nextChatMessage != null ? nextChatMessage['userId'] : null;
 
             final nextUserIsSame = currentMessageUserId == nextMessageUserId;
 

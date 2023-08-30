@@ -5,23 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/widgets/new_messages.dart';
 import 'package:flutter_chat_app/widgets/chat_messages.dart';
 
-import 'chats_list.dart';
-
 class ChatScreen extends StatefulWidget {
-  const ChatScreen(
-      {super.key, required this.chatRoomId, required this.chatRoomData});
-
-  final String chatRoomId;
-  final Map<String, dynamic> chatRoomData;
-
+  const ChatScreen({super.key});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-
-  late final Map<String, dynamic> chatRoomData;
 
 
   // void setUpPushNotifications() async{
@@ -32,43 +23,32 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void initState() {
-    chatRoomData = widget.chatRoomData;
     super.initState();
-    //setUpPushNotifications()
+    //setUpPushNotifications();
   }
 
   @override
   Widget build(BuildContext context) {
-    print(FirebaseAuth.instance.currentUser);
     return Scaffold(
       appBar: AppBar(
-        leadingWidth: 20,
-        title: ListTile(
-          leading: CircleAvatar(
-            backgroundImage: NetworkImage(chatRoomData['image_url']),
-            radius: 20,
-          ),
-          title: Text(chatRoomData['roomName']),
-        ),
+        title: const Text('Chats'),
         actions: [
           IconButton(
-              onPressed: (){}, //_showRoomDetails,
+              onPressed: () {
+                FirebaseAuth.instance.signOut();
+              },
               icon: Icon(
-                Icons.info_outline,
+                Icons.exit_to_app,
                 color: Theme.of(context).colorScheme.primary,
               ))
         ],
       ),
-      body: Column(
+      body: const Column(
         children: [
           Expanded(
-            child: ChatMessages(
-              chatRoomId: widget.chatRoomId,
-            ),
+            child: ChatMessages(),
           ),
-          NewMessage(
-            chatRoomId: widget.chatRoomId,
-          ),
+          NewMessage(),
         ],
       ),
     );
