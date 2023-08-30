@@ -120,6 +120,7 @@ class _AuthScreenState extends State<AuthScreen> {
           email: _enteredEmail,
           password: _enteredPassword,
         );
+        await _firebase.signOut();
         final storageRef = FirebaseStorage.instance
             .ref()
             .child('user_images')
@@ -136,9 +137,24 @@ class _AuthScreenState extends State<AuthScreen> {
           'image_url': imageUrl,
           'createdAt': creationDate,
           'sentRequests': [],
-          'appendingRequests': [],
+          'pendingRequests': [],
           'friends': []
         });
+        setState(() {
+          _isAuthenticating = false;
+        });
+        FocusScope.of(context).unfocus();
+        setState(() {
+          _isLogin = true;
+        });
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Account Created'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
       }
     } on FirebaseAuthException catch (error) {
       ScaffoldMessenger.of(context).clearSnackBars();

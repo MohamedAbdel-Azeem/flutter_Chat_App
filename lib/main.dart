@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/screens/add_friends.dart';
+import 'package:flutter_chat_app/screens/friends.dart';
 import 'package:flutter_chat_app/screens/auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_chat_app/screens/chat.dart';
@@ -35,7 +35,7 @@ class App extends StatelessWidget {
             return const SplashScreen();
           }
           if (snapshot.hasData) {
-            return const AddFriends();
+            return const Friends();
           }
           return const AuthScreen();
         },
