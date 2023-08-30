@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/widgets/message_bubble.dart';
 
 class ChatMessages extends StatelessWidget {
-  const ChatMessages({super.key});
+  const ChatMessages({super.key, required this.chatID});
+
+  final String chatID;
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +15,7 @@ class ChatMessages extends StatelessWidget {
 
     return StreamBuilder(
       stream: FirebaseFirestore.instance
-          .collection('chat')
+          .collection('chat+$chatID')
           .orderBy(
             'createdAt',
             descending: true,

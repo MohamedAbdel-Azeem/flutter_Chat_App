@@ -4,7 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class NewMessage extends StatefulWidget {
-  const NewMessage({super.key});
+  const NewMessage({super.key, required this.chatId});
+
+  final String chatId;
 
   @override
   State<NewMessage> createState() {
@@ -15,6 +17,7 @@ class NewMessage extends StatefulWidget {
 class _NewMessageState extends State<NewMessage> {
 
   final _messageController = TextEditingController();
+
 
 
   void _submitMessage() async{
@@ -29,7 +32,7 @@ class _NewMessageState extends State<NewMessage> {
 
     final user = FirebaseAuth.instance.currentUser!;
     final userData = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-    FirebaseFirestore.instance.collection('chat').add({
+    FirebaseFirestore.instance.collection('chat+${widget.chatId}').add({
       'text': enteredMessage,
       'createdAt': Timestamp.now(),
       'userId': user.uid,

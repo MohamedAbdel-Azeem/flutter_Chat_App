@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/screens/user_profile.dart';
 import 'package:flutter_chat_app/screens/splash.dart';
 import 'package:flutter_chat_app/widgets/add_person.dart';
+import 'package:flutter_chat_app/widgets/side_drawer.dart';
 
 class Friends extends StatefulWidget {
   const Friends({super.key});
@@ -305,6 +306,7 @@ class _FriendsState extends State<Friends> {
               );
             },
           ),
+          drawer: SideDrawer(),
         );
       },
     );
