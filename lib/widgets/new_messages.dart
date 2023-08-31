@@ -4,9 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class NewMessage extends StatefulWidget {
-  const NewMessage({super.key, required this.chatRoomId});
+  const NewMessage({super.key, required this.chatId});
 
-  final String chatRoomId;
+  final String chatId;
 
   @override
   State<NewMessage> createState() {
@@ -17,13 +17,8 @@ class NewMessage extends StatefulWidget {
 class _NewMessageState extends State<NewMessage> {
 
   final _messageController = TextEditingController();
-  late final String chatRoomId;
 
-  @override
-  void initState() {
-    chatRoomId = widget.chatRoomId;
-    super.initState();
-  }
+
 
   void _submitMessage() async{
     final enteredMessage = _messageController.text;
@@ -37,19 +32,12 @@ class _NewMessageState extends State<NewMessage> {
 
     final user = FirebaseAuth.instance.currentUser!;
     final userData = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-    FirebaseFirestore.instance.collection('chat+$chatRoomId').add({
+    FirebaseFirestore.instance.collection('chat+${widget.chatId}').add({
       'text': enteredMessage,
       'createdAt': Timestamp.now(),
       'userId': user.uid,
       'username': userData.data()!['username'],
       'userImage': userData.data()!['image_url'],
-    });
-    await FirebaseFirestore.instance
-        .collection('chatRoom')
-        .doc(chatRoomId)
-        .update({
-      'lastMessage': '${userData.data()!['username']}: $enteredMessage',
-      'lastMessageTime': DateTime.now(),
     });
   }
 
@@ -67,9 +55,6 @@ class _NewMessageState extends State<NewMessage> {
         children: [
           Expanded(
             child: TextField(
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onBackground,
-              ),
               controller: _messageController ,
               textCapitalization: TextCapitalization.sentences,
               autocorrect: false,

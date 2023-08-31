@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/widgets/message_bubble.dart';
 
 class ChatMessages extends StatelessWidget {
-  const ChatMessages({super.key, required this.chatRoomId});
+  const ChatMessages({super.key, required this.chatID});
 
-  final String chatRoomId;
+  final String chatID;
 
   @override
   Widget build(BuildContext context) {
@@ -15,11 +15,11 @@ class ChatMessages extends StatelessWidget {
 
     return StreamBuilder(
       stream: FirebaseFirestore.instance
-          .collection('chat+$chatRoomId')
+          .collection('chat+$chatID')
           .orderBy(
-        'createdAt',
-        descending: true,
-      )
+            'createdAt',
+            descending: true,
+          )
           .snapshots(),
       builder: (ctx, chatSnapshot) {
         if (chatSnapshot.connectionState == ConnectionState.waiting) {
@@ -29,7 +29,7 @@ class ChatMessages extends StatelessWidget {
         }
         if (!chatSnapshot.hasData || chatSnapshot.data!.docs.isEmpty) {
           return const Center(
-            child: Text('No messages found'),
+            child: Text('Say hi now?'),
           );
         }
         if (chatSnapshot.hasError) {
@@ -52,14 +52,15 @@ class ChatMessages extends StatelessWidget {
 
             final currentMessageUserId = chatMessage['userId'];
             final nextMessageUserId =
-            nextChatMessage != null ? nextChatMessage['userId'] : null;
+                nextChatMessage != null ? nextChatMessage['userId'] : null;
 
             final nextUserIsSame = currentMessageUserId == nextMessageUserId;
 
             if (nextUserIsSame) {
               return MessageBubble.next(
-                  message: chatMessage['text'],
-                  isMe: authenticatedUser.uid == currentMessageUserId);
+                message: chatMessage['text'],
+                isMe: authenticatedUser.uid == currentMessageUserId,
+              );
             } else {
               return MessageBubble.first(
                 userImage: chatMessage['userImage'],
