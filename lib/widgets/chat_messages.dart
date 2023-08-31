@@ -29,7 +29,7 @@ class ChatMessages extends StatelessWidget {
         }
         if (!chatSnapshot.hasData || chatSnapshot.data!.docs.isEmpty) {
           return const Center(
-            child: Text('No messages found'),
+            child: Text('Say hi now?'),
           );
         }
         if (chatSnapshot.hasError) {
@@ -58,8 +58,9 @@ class ChatMessages extends StatelessWidget {
 
             if (nextUserIsSame) {
               return MessageBubble.next(
-                  message: chatMessage['text'],
-                  isMe: authenticatedUser.uid == currentMessageUserId);
+                message: chatMessage['text'],
+                isMe: authenticatedUser.uid == currentMessageUserId,
+              );
             } else {
               return MessageBubble.first(
                 userImage: chatMessage['userImage'],

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,7 @@ class _AuthScreenState extends State<AuthScreen> {
   var _enteredPassword = '';
   var _enteredUsermame = '';
   File? _selectedImage;
+  String? _fCMToken;
 
   var _isAuthenticating = false;
 
@@ -44,6 +46,7 @@ class _AuthScreenState extends State<AuthScreen> {
       return '';
     }
   }
+
 
   Future<bool> _isUniqueUsername(String enteredUsername) async{
       final db = FirebaseFirestore.instance;
@@ -128,7 +131,8 @@ class _AuthScreenState extends State<AuthScreen> {
         await storageRef.putFile(_selectedImage!);
         final imageUrl = await storageRef.getDownloadURL();
         final formatter = DateFormat('yyyy-MM-dd');
-        final creationDate = formatter.format(DateTime.now());
+        final date = DateTime.now();
+        final String creationDate = formatter.format(date);
         await FirebaseFirestore.instance
             .collection('users')
             .doc(userCredentials.user!.uid).set({
@@ -138,7 +142,7 @@ class _AuthScreenState extends State<AuthScreen> {
           'createdAt': creationDate,
           'sentRequests': [],
           'pendingRequests': [],
-          'friends': []
+          'friends': [],
         });
         setState(() {
           _isAuthenticating = false;

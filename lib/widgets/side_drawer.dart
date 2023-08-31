@@ -37,46 +37,52 @@ class SideDrawer extends StatelessWidget {
             child: CircularProgressIndicator(),
           );
         }
-        if (userFriends.length == 0){
-          return const Center(child: Text('Add some new friends'),);
+        if (userFriends.isEmpty){
+          return  Center(child: Text('Add some new friends', style: Theme.of(context).textTheme.titleMedium,),);
         }
-        return ListView.builder(
-          itemCount: userFriends.length,
-          itemBuilder: (ctx, index) {
-            return ListTile(
-              contentPadding: const EdgeInsets.fromLTRB(25, -20, 20, 10),
-              onTap: () async {
-                final userData = await FirebaseFirestore.instance.collection(
-                    'users').doc(user!.uid).get().then((snapshot) =>
-                    snapshot.data());
+        return MediaQuery.removePadding(
+          context: context,
+          removeTop: true,
+          child: ListView.separated(
+            separatorBuilder: (context, index){
+              return const Divider();
+            },
+            itemCount: userFriends.length,
+            itemBuilder: (ctx, index) {
+              return ListTile(
+                onTap: () async {
+                  final userData = await FirebaseFirestore.instance.collection(
+                      'users').doc(user!.uid).get().then((snapshot) =>
+                      snapshot.data());
 
-                final otherUserQuerySnapshot = await FirebaseFirestore.instance.collection(
-                    'users')
-                    .where(
-                    'username', isEqualTo: userFriends[index]['username'])
-                    .limit(1)
-                    .get();
+                  final otherUserQuerySnapshot = await FirebaseFirestore.instance.collection(
+                      'users')
+                      .where(
+                      'username', isEqualTo: userFriends[index]['username'])
+                      .limit(1)
+                      .get();
 
-                final otherUserId = otherUserQuerySnapshot.docs[0].id;
+                  final otherUserId = otherUserQuerySnapshot.docs[0].id;
 
-                Navigator.of(context).push(MaterialPageRoute(builder: (ctx) =>
-                    ChatScreen(deviceUser: userData!,
-                      otherUser: userFriends[index],
-                      otherUserId:otherUserId,)));
-              },
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(userFriends[index]['image_url']),
-              ),
-              title: Text(
-                userFriends[index]['username'],
-                textAlign: TextAlign.justify,
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .titleLarge,
-              ),
-            );
-          },
+                  Navigator.of(context).push(MaterialPageRoute(builder: (ctx) =>
+                      ChatScreen(deviceUser: userData!,
+                        otherUser: userFriends[index],
+                        otherUserId:otherUserId,)));
+                },
+                leading: CircleAvatar(
+                  backgroundImage: NetworkImage(userFriends[index]['image_url']),
+                ),
+                title: Text(
+                  userFriends[index]['username'],
+                  textAlign: TextAlign.justify,
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .titleLarge,
+                ),
+              );
+            },
+          ),
         );
       },
     );
@@ -137,7 +143,8 @@ class SideDrawer extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(child: _getChats(),),
+          const SizedBox(height: 12,),
+          Expanded(child: _getChats()),
           // ListView.builder(
           //   itemCount:,
           //   itemBuilder: (ctx, index) {

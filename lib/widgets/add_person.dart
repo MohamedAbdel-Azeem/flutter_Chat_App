@@ -22,7 +22,6 @@ class _AddPersonState extends State<AddPerson> {
        msg: message,
        toastLength: Toast.LENGTH_SHORT,
        gravity: ToastGravity.BOTTOM,
-       timeInSecForIosWeb: 2,
        backgroundColor: Colors.grey,
        textColor: Colors.white,
        fontSize: 16.0,
@@ -41,6 +40,9 @@ class _AddPersonState extends State<AddPerson> {
      } else {
        final targetUser = querySnapshot.docs.first;
        final targetUserData = targetUser.data() as Map<String, dynamic>;
+       print(userData['friends']);
+       print(userData['pendingRequests']);
+       print(userData['sentRequests']);
        if (targetUserData['username'] == userData['username']) {
          _showToast("That's you :)");
          return;
