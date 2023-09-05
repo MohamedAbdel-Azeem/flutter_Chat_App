@@ -35,7 +35,7 @@ class _FriendsState extends State<Friends> {
       useSafeArea: true,
       context: context,
       builder: (ctx) => FractionallySizedBox(
-        heightFactor: 0.7,
+        heightFactor: 0.8,
         child: Column(
           children: [
             const ScrollIndicator(),
@@ -71,11 +71,17 @@ class _FriendsState extends State<Friends> {
       _rejectRequest(id);
       await FirebaseFirestore.instance.collection('users').doc(userId).update(
           {
-            'friends': FieldValue.arrayUnion([id]),
+            'friends': FieldValue.arrayUnion([{
+              'id': id ,
+              'lastMessageTime': DateTime.now(),
+            }]),
           });
       await FirebaseFirestore.instance.collection('users').doc(id).update(
           {
-            'friends': FieldValue.arrayUnion([userId]),
+            'friends': FieldValue.arrayUnion([{
+              'id': userId ,
+              'lastMessageTime': DateTime.now(),
+            }]),
           });
   }
 

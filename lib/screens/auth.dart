@@ -34,6 +34,7 @@ class _AuthScreenState extends State<AuthScreen> {
   String? _fCMToken;
 
   var _isAuthenticating = false;
+  var _isObscured = true;
 
   Future<String?> _getEmail(String username) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -54,6 +55,7 @@ class _AuthScreenState extends State<AuthScreen> {
       QuerySnapshot querySnapshot = await usersCollection.where('username', isEqualTo: enteredUsername).get();
       return querySnapshot.docs.isEmpty;
   }
+
 
   void _submit() async {
     final isValid = _formKey.currentState!.validate();
@@ -143,13 +145,12 @@ class _AuthScreenState extends State<AuthScreen> {
           'sentRequests': [],
           'pendingRequests': [],
           'friends': [],
-        });
-        setState(() {
-          _isAuthenticating = false;
+          'FCMToken': await FirebaseMessaging.instance.getToken(),
         });
         FocusScope.of(context).unfocus();
         setState(() {
           _isLogin = true;
+          _isAuthenticating = false;
         });
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -174,6 +175,7 @@ class _AuthScreenState extends State<AuthScreen> {
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -248,10 +250,15 @@ class _AuthScreenState extends State<AuthScreen> {
                             },
                           ),
                           TextFormField(
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
+                              suffixIcon: IconButton(onPressed: (){
+                                setState(() {
+                                  _isObscured = !_isObscured;
+                                });
+                              }, icon: Icon(_isObscured? Icons.visibility_off : Icons.visibility)),
                               labelText: 'Password',
                             ),
-                            obscureText: true,
+                            obscureText: _isObscured,
                             validator: (value) {
                               if (value == null || value.trim().length < 6) {
                                 return 'Password must be at least 6 characters long.';

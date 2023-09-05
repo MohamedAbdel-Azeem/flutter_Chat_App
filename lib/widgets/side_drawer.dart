@@ -10,6 +10,20 @@ class SideDrawer extends StatelessWidget {
 
   List<Map<String, dynamic>> userFriends = [];
 
+  void sortListByTimestamp(List<Map<String, dynamic>> list) {
+    list.sort((a, b) {
+      final timestampA = a['lastMessageTime'] as Timestamp; // Replace 'Timestamp' with the actual type of your timestamp field
+      final timestampB = b['lastMessageTime'] as Timestamp; // Replace 'Timestamp' with the actual type of your timestamp field
+
+      // Compare the timestamps by converting them to DateTime objects
+      final dateTimeA = timestampA.toDate();
+      final dateTimeB = timestampB.toDate();
+
+      return dateTimeB.compareTo(dateTimeA); // Sort in descending order
+    });
+  }
+
+
   Future<void> _getFriendsDetails() async {
     userFriends = [];
     final userData = await FirebaseFirestore.instance
@@ -17,15 +31,18 @@ class SideDrawer extends StatelessWidget {
         .doc(user!.uid)
         .get()
         .then((snapshot) => snapshot.data());
-    final userFriendsIds = userData!['friends'];
-    for (final id in userFriendsIds) {
+    final userFriendsDetails = userData!['friends']; // returns a Map with 2 keys : friendID and the lastMessageTime
+    for (final f in userFriendsDetails) {
       final friend = await FirebaseFirestore.instance
           .collection('users')
-          .doc(id)
+          .doc(f['id'])
           .get()
           .then((snapshot) => snapshot.data());
-      userFriends.add(friend!);
+      friend!['lastMessageTime'] = f['lastMessageTime'];
+      userFriends.add(friend);
     }
+    sortListByTimestamp(userFriends);
+    print(userFriends[0]['lastMessageTime']);
   }
 
   Widget _getChats() {
@@ -92,67 +109,78 @@ class SideDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     user = FirebaseAuth.instance.currentUser;
 
-    return Drawer(
-      width: 250,
-      child: Column(
-        children: [
-          SizedBox(
-            height: 170,
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 0),
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 70),
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [
-                    Theme
-                        .of(context)
-                        .colorScheme
-                        .primary,
-                    Theme
-                        .of(context)
-                        .colorScheme
-                        .primary
-                        .withOpacity(0.8)
-                  ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.chat_sharp,
-                    size: 52,
-                    color: Theme
-                        .of(context)
-                        .colorScheme
-                        .onPrimary,
-                  ),
-                  const SizedBox(
-                    width: 18,
-                  ),
-                  Text(
-                    'Friends',
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .titleLarge!
-                        .copyWith(
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance.collection('users').doc(user!.uid).snapshots(),
+      builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting){
+            return const Center(child: Text(''),);
+          }
+          if (snapshot.hasError){
+            return const Center(child: Text('Error building Stream'),);
+          }
+        return Drawer(
+          width: 250,
+          child: Column(
+            children: [
+              SizedBox(
+                height: 170,
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 0),
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 70),
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: [
+                        Theme
+                            .of(context)
+                            .colorScheme
+                            .primary,
+                        Theme
+                            .of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.8)
+                      ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.chat_sharp,
+                        size: 52,
                         color: Theme
                             .of(context)
                             .colorScheme
                             .onPrimary,
-                        fontSize: 30),
+                      ),
+                      const SizedBox(
+                        width: 18,
+                      ),
+                      Text(
+                        'Friends',
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .titleLarge!
+                            .copyWith(
+                            color: Theme
+                                .of(context)
+                                .colorScheme
+                                .onPrimary,
+                            fontSize: 30),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+              const SizedBox(height: 12,),
+              Expanded(child: _getChats()),
+              // ListView.builder(
+              //   itemCount:,
+              //   itemBuilder: (ctx, index) {
+              //
+              //   },
+              // ),
+            ],
           ),
-          const SizedBox(height: 12,),
-          Expanded(child: _getChats()),
-          // ListView.builder(
-          //   itemCount:,
-          //   itemBuilder: (ctx, index) {
-          //
-          //   },
-          // ),
-        ],
-      ),
+        );
+      }
     );
   }
 }

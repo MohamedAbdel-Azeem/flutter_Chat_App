@@ -40,7 +40,7 @@ class _ChatScreenState extends State<ChatScreen> {
       useSafeArea: true,
       context: context,
       builder: (ctx) => FractionallySizedBox(
-        heightFactor: 0.7,
+        heightFactor: 0.8,
         child: Column(
           children: [
             const ScrollIndicator(),

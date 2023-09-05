@@ -40,9 +40,6 @@ class _AddPersonState extends State<AddPerson> {
      } else {
        final targetUser = querySnapshot.docs.first;
        final targetUserData = targetUser.data() as Map<String, dynamic>;
-       print(userData['friends']);
-       print(userData['pendingRequests']);
-       print(userData['sentRequests']);
        if (targetUserData['username'] == userData['username']) {
          _showToast("That's you :)");
          return;
